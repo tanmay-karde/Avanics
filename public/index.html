@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Avanics Engineers – Service Dispatch</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1b1d21;--pan:#25282d;--ln:#3a3e45;--tx:#e9e7e2;--mu:#9a9da3;--red:#e2262d;--grn:#3fbf7f;--amb:#f0b429}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 'IBM Plex Sans',system-ui,sans-serif;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+h1,h2,h3{font-family:'Barlow Condensed','Arial Narrow',sans-serif;margin:0;font-weight:700}
+header{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--ln);flex-wrap:wrap}
+header img{width:44px;height:44px;border-radius:6px;background:#fff}
+header h1{font-size:22px;line-height:1}header small{color:var(--mu);display:block;font-size:12px}
+.sp{flex:1}.st{display:flex;gap:18px}.st b{font:700 22px 'Barlow Condensed',sans-serif;display:block;line-height:1}.st span{font-size:11px;color:var(--mu)}
+button{font:inherit;cursor:pointer;border:1px solid var(--ln);background:var(--pan);color:var(--tx);padding:7px 12px;border-radius:5px}
+button:hover:not(:disabled){border-color:var(--mu)}button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+button.pr{background:var(--red);border-color:var(--red);color:#fff;font-weight:500}button:disabled{opacity:.4;cursor:not-allowed}
+main{flex:1;min-height:0;display:flex;gap:10px;padding:10px 16px}
+#mapw{flex:1;position:relative;min-width:0;border:1px solid var(--ln);border-radius:6px;overflow:hidden;background:#102a2f}
+#map{width:100%;height:100%;display:block}
+aside{width:310px;display:flex;flex-direction:column;min-height:0;border:1px solid var(--ln);border-radius:6px;background:var(--pan)}
+aside h2{padding:10px 12px;font-size:17px;border-bottom:1px solid var(--ln)}
+#jobs{overflow:auto;flex:1;padding:8px 12px}.mu{color:var(--mu);font-size:12px}
+.jc{border:1px solid var(--ln);border-radius:6px;padding:9px;margin-bottom:8px;background:#1f2226}
+.jc b{font-family:'Barlow Condensed';font-size:16px}.jc .tgm{font-size:12px;color:var(--mu);margin:4px 0}
+.steps{display:flex;gap:3px;margin:6px 0}.steps i{flex:1;height:5px;border-radius:3px;background:var(--ln)}.steps i.on{background:var(--grn)}.steps i.cur{background:var(--amb)}
+.sl{display:flex;justify-content:space-between;font-size:10px;color:var(--mu)}
+.star{color:var(--amb);letter-spacing:1px}.link{background:none;border:0;color:var(--mu);padding:0;text-decoration:underline;font-size:12px}
+#roster{display:flex;gap:10px;padding:0 16px 12px;justify-content:center}
+.tc{flex:1;max-width:220px;border:2px solid var(--ln);border-radius:6px;background:var(--pan);padding:0;overflow:hidden;display:flex;text-align:left}
+.tc img{width:74px;height:84px;object-fit:cover;background:#33373d}.tc div{padding:8px 10px}
+.tc b{display:block;font:700 18px 'Barlow Condensed'}.tc small{display:block;font-size:12px;color:var(--grn)}
+.tc.busy{border-color:var(--amb)}.tc.busy small{color:var(--amb)}.tc.off{opacity:.45;filter:grayscale(1)}.tc.off small{color:var(--mu)}
+.tc.pick{cursor:pointer}.tc.pick:hover{border-color:var(--tx)}.tc.sel{border-color:var(--red)}
+.tc:disabled{cursor:default}
+.ov{position:absolute;inset:0;background:rgba(10,14,16,.86);display:none;place-items:center;padding:12px;overflow:auto;z-index:5}.ov.on{display:grid}
+.card{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:10px;max-width:900px;width:100%}
+.bx{background:var(--pan);border:1px solid var(--ln);border-radius:6px;padding:12px}
+.bx h3{font-size:16px;margin-bottom:6px}.tag{display:inline-block;padding:1px 8px;border-radius:3px;font:700 12px 'Barlow Condensed';background:var(--red);color:#fff;margin-bottom:6px}
+.q{font-size:15px;margin:8px 0}.rq{padding-left:18px;margin:0}.rq li{margin:4px 0}
+.ctr{text-align:center}.ctr svg{width:100%;max-width:230px}.btns{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.mm{height:8px;border-radius:4px;background:var(--ln);overflow:hidden;margin:6px 0 2px}.mm i{display:block;height:100%;width:0;transition:width .3s}
+.wave{display:flex;gap:3px;align-items:flex-end;height:26px;margin:6px 0}.wave i{width:4px;height:6px;background:var(--red);border-radius:2px}
+.wave.on i{animation:wv .7s infinite ease-in-out}.wave.on i:nth-child(2n){animation-delay:.2s}.wave.on i:nth-child(3n){animation-delay:.4s}
+@keyframes wv{50%{height:24px}}
+.incoming{position:absolute;left:10px;bottom:10px;display:flex;flex-direction:column;gap:6px;z-index:2;max-width:290px}
+.inc{background:rgba(226,38,45,.92);border:0;color:#fff;text-align:left;padding:8px 12px;display:flex;gap:10px;align-items:center;animation:rg 1s infinite}
+.inc small{display:block;opacity:.85}@keyframes rg{50%{transform:translateX(3px)}}
+@keyframes pu{0%{r:7;opacity:.9}100%{r:22;opacity:0}}.pulse{animation:pu 1.6s infinite}
+@media(prefers-reduced-motion:reduce){.pulse,.inc,.wave.on i{animation:none}}
+input{font:inherit;padding:8px 10px;border-radius:5px;border:1px solid var(--ln);background:#1b1d21;color:var(--tx);width:100%;margin:8px 0}
+.banner{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:8px 20px;border-radius:5px;font:700 20px 'Barlow Condensed';z-index:4;display:none;white-space:nowrap}
+.big{font:700 40px 'Barlow Condensed'}
+@media(max-width:800px){main{flex-direction:column}aside{width:auto;height:190px}.card{grid-template-columns:1fr}.st{display:none}.tc img{width:56px;height:64px}}
+</style></head><body>
+<header>
+<img id="logo" alt="Avanics Engineers logo">
+<div><h1>Avanics Engineers</h1><small>Fire safety service dispatch · Kalyan</small></div>
+<div class="sp"></div>
+<div class="st"><div><b id="sd">0/5</b><span>Jobs done</span></div><div><b id="sa">–</b><span>Avg rating</span></div><div><b id="so">0</b><span>Open calls</span></div></div>
+<button id="vt" aria-pressed="true">Voice: on</button>
+</header>
+<main>
+<div id="mapw"><svg id="map" viewBox="0 0 800 460" preserveAspectRatio="xMidYMid slice" aria-label="Kalyan service map"></svg>
+<div class="incoming" id="inc" aria-live="polite"></div><div class="banner" id="banner" role="status"></div>
+<div class="ov on" id="modal"></div></div>
+<aside><h2>Active jobs</h2><div id="jobs"><p class="mu">No jobs yet</p></div></aside>
+</main>
+<div id="roster"></div>
+<script src="assets.js"></script>
+<script>
+const SK=['Extinguishers','Alarm panels','Gas suppression','Hydrant & sprinkler','Smoke detection'];
+const MAX=5, STEPS=['sent','accepted','enroute','done'], STL=['Sent','Accepted','On the way','Done'];
+// NOTE: coordinates are approximate – replace with exact lat/lng from Google Maps (right-click > copy coordinates).
+const HQ={name:'Avanics HQ, Sai Chowk',lat:19.2395,lng:73.1210};
+const SITES=[
+ {n:'Raunak City Phase 4',a:'Adharwadi, Kalyan West',lat:19.2565,lng:73.1195},
+ {n:'Tarangan Nx',a:'Kalyan',lat:19.2480,lng:73.1100},
+ {n:'Mohan Pride',a:'Kalyan',lat:19.2250,lng:73.1480},
+ {n:'Mahaveer Nagri',a:'Kalyan',lat:19.2290,lng:73.1320},
+ {n:'Oshodhara Greens CHS',a:'Kalyan',lat:19.2450,lng:73.1330},
+ {n:'Riverdale',a:'Kalyan',lat:19.2210,lng:73.1250},
+ {n:'Amrut Heaven',a:'Kalyan',lat:19.2330,lng:73.1530},
+ {n:'Madhav Sankalp',a:'Kalyan',lat:19.2620,lng:73.1260},
+ {n:'Life Gym, Khadakpada',a:'Khadakpada, Kalyan West',lat:19.2495,lng:73.1285}];
+const CALLS=[
+['Expired extinguishers','Minor',"Our fire extinguishers on the second floor all show expired tags. Please refill and re-tag them before the audit.",'Mr. Deshmukh',[3,0,0,0,0],['Refill and re-tag every extinguisher','Check pressure gauges']],
+['Alarm panel fault','Urgent',"The fire alarm panel keeps beeping and shows a fault on zone three. We cannot silence it.",'Mrs. Kulkarni',[0,3,0,0,1],['Trace the zone three fault','Reset panel and test the loop']],
+['Low FM200 pressure','Critical',"The gauge on our server room gas suppression cylinder is reading low. Please check it urgently.",'Mr. Iyer',[0,1,3,0,1],['Inspect FM200 cylinder pressure','Do not discharge the system']],
+['Hydrant pump not starting','Critical',"During our weekly test the fire hydrant pump did not start automatically. Can someone come right away?",'Mr. Patil',[0,1,0,3,0],['Test pump auto start','Check pump control panel']],
+['Leaking sprinkler head','Urgent',"A sprinkler head near the lobby is dripping water on the floor. Please fix it today.",'Mr. Shaikh',[0,0,0,3,1],['Isolate the zone, replace the head','Check for corrosion']],
+['False smoke alarms','Minor',"Our smoke detectors go off every time someone cooks nearby. Can you check them?",'Mrs. Nair',[0,1,0,0,3],['Clean or relocate detectors','Adjust sensitivity']],
+['Hose reel nozzle missing','Minor',"One of our hose reel cabinets has no nozzle and the hose looks cracked.",'Mr. Gupta',[1,0,0,3,0],['Replace nozzle and hose','Pressure test the reel']],
+['Dead hooter','Urgent',"The fire alarm hooter on our ground floor is not sounding during tests.",'Mr. Menon',[0,3,0,0,2],['Test sounder circuit','Replace faulty hooter']]];
+const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg';
+const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+$('logo').src=IMG.logo;
+let S={shift:null,spawned:0,calls:[],techs:[],jobs:[],events:[],tgOn:false,open:null,sel:null,done:new Set(),sum:0,voice:true,bag:[],started:false,vmsg:'',audio:null};
+// ---------- map projection ----------
+const pts=[HQ,...SITES],lat0=Math.max(...pts.map(p=>p.lat)),lat1=Math.min(...pts.map(p=>p.lat)),lng0=Math.min(...pts.map(p=>p.lng)),lng1=Math.max(...pts.map(p=>p.lng));
+const K=Math.cos(19.24*Math.PI/180),W=(lng1-lng0)*K,H=lat0-lat1,SC=Math.min(700/W,380/H);
+const proj=p=>[400+((p.lng-lng0)*K-W/2)*SC,230+((lat0-p.lat)-H/2)*SC];
+const km=(a,b)=>{const R=6371,r=x=>x*Math.PI/180,dl=r(b.lat-a.lat),dg=r(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+let seed=11;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+const map=$('map');el('rect',{width:800,height:460,fill:'#102a2f'},map);
+for(let x=0;x<=800;x+=40)el('line',{x1:x,x2:x,y2:460,stroke:'#17403f','stroke-width':.6},map);
+for(let y=0;y<=460;y+=40)el('line',{y1:y,y2:y,x2:800,stroke:'#17403f','stroke-width':.6},map);
+for(let i=0;i<110;i++)el('rect',{x:rnd()*780,y:rnd()*440,width:12+rnd()*28,height:10+rnd()*22,fill:'#15393c',stroke:'#2a7a72','stroke-width':.7},map);
+const routes=el('g',{},map),pins=el('g',{},map),units=el('g',{},map);
+{const[x,y]=proj(HQ),g=el('g',{},map);el('rect',{x:x-11,y:y-11,width:22,height:22,fill:'#fff',stroke:'#e2262d','stroke-width':3,rx:3},g);
+const t=el('text',{x,y:y+28,'text-anchor':'middle',fill:'#e9e7e2','font-size':11},g);t.textContent='Avanics HQ'}
+// ---------- API ----------
+const api=(p,b)=>fetch('/api/'+p,{method:b?'POST':'GET',headers:{'Content-Type':'application/json',Authorization:'Bearer '+(localStorage.getItem('av_tok')||'')},body:b?JSON.stringify(b):undefined}).then(r=>{if(r.status===401&&p!=='login')showLogin();return r.json()});
+async function poll(){if(!S.shift)return;try{const d=await api('state?shift='+S.shift);if(d.error)return;S.techs=d.techs;S.jobs=d.jobs;S.events=d.events;S.tgOn=d.telegram;onJobs();}catch(e){}}
+function onJobs(){
+ S.jobs.forEach(j=>{const c=S.calls.find(c=>c.seq==j.seq);
+  if(j.status==='declined'&&c&&c.assigned){c.assigned=false;c.job=null;S.open===null&&speakNote()}
+  if(j.status==='done'&&!S.done.has(j.id)){S.done.add(j.id);S.sum+=j.rating;S.calls=S.calls.filter(x=>x.seq!=j.seq);scheduleCall(2500)}});
+ $('sd').textContent=S.done.size+'/'+MAX;$('sa').textContent=S.done.size?(S.sum/S.done.size).toFixed(1):'–';
+ drawPins();drawJobs();drawRoster();if(S.done.size>=MAX)endShift()}
+const speakNote=()=>{};
+// ---------- calls ----------
+function spawn(){if(!S.started||S.spawned>=MAX||S.calls.filter(c=>!c.assigned).length>=3)return;
+ if(!S.bag.length)S.bag=CALLS.map((_,i)=>i).sort(()=>Math.random()-.5);
+ const used=new Set(S.calls.map(c=>c.site)),free=SITES.map((_,i)=>i).filter(i=>!used.has(i));
+ S.spawned++;const c={seq:S.spawned,d:CALLS[S.bag.pop()],site:free[Math.floor(Math.random()*free.length)],assigned:false};S.calls.push(c);ring();drawPins();drawInc()}
+const scheduleCall=ms=>setTimeout(spawn,ms);
+function ring(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),t=a.currentTime;[0,.35,.9,1.25].forEach(o=>{const s=a.createOscillator(),g=a.createGain();s.frequency.value=o%.9<.3?880:660;g.gain.setValueAtTime(.12,t+o);g.gain.exponentialRampToValueAtTime(.001,t+o+.28);s.connect(g);g.connect(a.destination);s.start(t+o);s.stop(t+o+.3)})}catch(e){}}
+function drawInc(){const box=$('inc');box.innerHTML='';S.calls.filter(c=>!c.assigned).forEach(c=>{const b=document.createElement('button');b.className='inc';
+ b.innerHTML=`<span style="font-size:20px">📞</span><span><b>${c.d[0]}</b><small>${SITES[c.site].n} · ${c.d[1]}</small></span>`;b.onclick=()=>openCall(c);box.appendChild(b)});$('so').textContent=S.calls.filter(c=>!c.assigned).length}
+function drawPins(){pins.innerHTML='';S.calls.forEach(c=>{const[x,y]=proj(SITES[c.site]),col=c.assigned?'#f0b429':'#e2262d';
+ const g=el('g',{style:'cursor:pointer',tabindex:0,role:'button','aria-label':c.d[0]},pins);
+ if(!c.assigned)el('circle',{cx:x,cy:y,r:7,fill:col,class:'pulse'},g);
+ el('circle',{cx:x,cy:y,r:9,fill:col,stroke:'#fff','stroke-width':2},g);
+ const t=el('text',{x:x+13,y:y+4,fill:'#fff','font-size':11},g);t.textContent=SITES[c.site].n;
+ g.onclick=()=>openCall(c);g.onkeydown=e=>e.key=='Enter'&&openCall(c)});drawInc()}
+// ---------- voice ----------
+function speak(c){if(!S.voice)return;const text=`${c.d[3]} from ${SITES[c.site].n} says: ${c.d[2]}`;stopVoice();
+ const wv=$('wv');wv&&wv.classList.add('on');const end=()=>{const w=$('wv');w&&w.classList.remove('on')};
+ const fallback=()=>{const ss=window.speechSynthesis;if(!ss){S.vmsg='Voice not supported here – read the caption.';upNote();end();return}
+  const u=new SpeechSynthesisUtterance(text),vs=ss.getVoices(),v=vs.find(x=>x.lang=='en-IN')||vs.find(x=>x.lang.startsWith('en'));
+  if(v){u.voice=v;u.lang=v.lang}else u.lang='en-IN';u.rate=.95;u.onend=end;u.onerror=()=>{S.vmsg='Voice blocked by the browser – read the caption.';upNote();end()};ss.speak(u)};
+ // optional real recordings: put audio/call-<n>.mp3 (n = 1..8) in /public/audio
+ const idx=CALLS.indexOf(c.d)+1,a=new Audio('audio/call-'+idx+'.mp3');S.audio=a;a.onended=end;a.onerror=fallback;a.play().catch(fallback)}
+function stopVoice(){try{S.audio&&S.audio.pause();window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
+const upNote=()=>{const n=$('vn');n&&(n.textContent=S.vmsg)};
+// ---------- skill chart ----------
+function radar(req,ts){const R=78,C=100,pt=(i,v)=>{const a=(-90+72*i)*Math.PI/180;return[C+R*v/5*Math.cos(a),C+R*v/5*Math.sin(a)]};
+ const poly=(v,s,f)=>`<polygon points="${v.map((x,i)=>pt(i,x).join(',')).join(' ')}" stroke="${s}" fill="${f}" stroke-width="2"/>`;
+ let s='<svg viewBox="0 0 200 200" role="img" aria-label="Skill match chart">';[1,3,5].forEach(k=>s+=poly([k,k,k,k,k],'#3a3e45','none'));
+ s+=poly(req,'#e2262d','rgba(226,38,45,.35)');if(ts)s+=poly(ts,'#e9e7e2','rgba(233,231,226,.18)');
+ SK.forEach((n,i)=>{const[x,y]=pt(i,6.4);s+=`<text x="${x}" y="${y}" text-anchor="middle" font-size="8" fill="#9a9da3">${n.split(' ')[0]}</text>`});return s+'</svg>'}
+const fitOf=(req,sk)=>{let n=0,d=0;req.forEach((q,i)=>{if(q){n+=q*Math.min(1,sk[i]/(q+1));d+=q}});return d?n/d:1};
+const verdict=f=>f>=.85?['Strong match','#3fbf7f']:f>=.6?['Risky','#f0b429']:['Poor match','#e2262d'];
+// ---------- modal ----------
+function openCall(c){if(c.assigned||!S.started)return;S.open=c;S.sel=null;S.vmsg='';render();drawRoster();speak(c)}
+function closeModal(){S.open=null;S.sel=null;stopVoice();$('modal').className='ov';drawRoster()}
+function render(){const c=S.open;if(!c)return;const d=c.d,t=S.sel!=null?S.techs[S.sel]:null,s=SITES[c.site],f=t?fitOf(d[4],t.skills):0,v=verdict(f);
+ $('modal').className='ov on';$('modal').innerHTML=`<div class="card">
+ <div class="bx"><span class="tag">${d[1]}</span><h3>${d[0]}</h3><div class="mu">${d[3]} · ${s.n}</div>
+ <div class="wave" id="wv" aria-hidden="true">${'<i></i>'.repeat(14)}</div><p class="q">“${d[2]}”</p><button id="rp" aria-label="Replay voice">🔊 Replay</button><div class="mu" id="vn">${S.vmsg}</div></div>
+ <div class="bx ctr"><h3>${t?t.name+' vs this job':'Skills needed'}</h3>${radar(d[4],t&&t.skills)}
+ <div class="mm"><i style="width:${Math.round(f*100)}%;background:${v[1]}"></i></div><div class="mu">${t?`${v[0]} · ${Math.round(f*100)}%`:'&nbsp;'}</div>
+ <div class="btns"><button id="cl">Close</button><button class="pr" id="dp" ${t?'':'disabled'}>Dispatch${t?' '+t.name:''}</button></div><div class="mu" id="err" style="color:#e2262d"></div></div>
+ <div class="bx"><h3>Needs</h3><ul class="rq">${d[5].map(x=>`<li>${x}</li>`).join('')}</ul></div></div>`;
+ $('cl').onclick=closeModal;$('rp').onclick=()=>speak(c);$('dp').onclick=dispatch}
+async function dispatch(){const c=S.open,t=S.techs[S.sel];$('dp').disabled=true;
+ const r=await api('dispatch',{shift:S.shift,seq:c.seq,tech:t.id,call:{title:c.d[0],site:SITES[c.site].n,caller:c.d[3],priority:c.d[1],quote:c.d[2],req:c.d[4]}});
+ if(r.error){$('err').textContent=r.error;$('dp').disabled=false;return}
+ c.assigned=true;c.job=r.job.id;c.tgs=r.telegram;closeModal();await poll()}
+// ---------- roster ----------
+function drawRoster(){const r=$('roster');r.innerHTML='';S.techs.forEach((t,i)=>{const b=document.createElement('button'),busy=t.status==='busy';
+ b.className='tc'+(!t.on_duty?' off':busy?' busy':'')+(S.sel===i?' sel':'')+(S.open&&t.on_duty&&!busy?' pick':'');b.disabled=!(S.open&&t.on_duty&&!busy);
+ b.innerHTML=`<img src="${IMG[t.id]||''}" alt="${t.name}"><div><b>${t.name}</b><small>${!t.on_duty?'Busy':busy?'On a job':'Ready'}</small></div>`;
+ b.onclick=()=>{S.sel=i;render();drawRoster()};r.appendChild(b)})}
+// ---------- jobs panel + moving markers ----------
+function drawJobs(){const box=$('jobs');const act=S.jobs.slice().reverse();if(!act.length)return;box.innerHTML='';
+ act.forEach(j=>{const t=S.techs.find(x=>x.id===j.tech_id),si=STEPS.indexOf(j.status),c=S.calls.find(x=>x.seq==j.seq),d=document.createElement('div');d.className='jc';
+ const steps=STEPS.map((_,i)=>`<i class="${j.status==='done'||i<si?'on':i==si?'cur':''}"></i>`).join('');
+ d.innerHTML=`<b>${j.title}</b> <span class="mu">· ${t?t.name:''}</span><div class="mu">${j.site}</div>
+ <div class="steps">${steps}</div><div class="sl">${STL.map(x=>`<span>${x}</span>`).join('')}</div>
+ ${j.status==='declined'?'<div class="mu" style="color:#e2262d">Declined – reassign</div>':''}
+ ${j.status==='done'?`<div class="star">${'★'.repeat(j.rating)}${'☆'.repeat(5-j.rating)}</div><div class="mu">“${j.comment}”</div>`:`<div class="tgm">📱 ${c&&c.tgs&&c.tgs!=='sent'?c.tgs:'Sent on Telegram'}</div><button class="link" data-j="${j.id}">Mark done (demo)</button>`}`;
+ box.appendChild(d)});box.querySelectorAll('[data-j]').forEach(b=>b.onclick=async()=>{await api('dispatch',{action:'complete',job:b.dataset.j});poll()})}
+function frame(){routes.innerHTML='';units.innerHTML='';
+ S.jobs.forEach(j=>{if(['declined','done'].includes(j.status))return;const c=S.calls.find(x=>x.seq==j.seq);if(!c)return;
+  const s=SITES[c.site],[x0,y0]=proj(HQ),[x1,y1]=proj(s);el('line',{x1:x0,y1:y0,x2:x1,y2:y1,stroke:'#f0b429','stroke-width':1.5,'stroke-dasharray':'5 5',opacity:.8},routes);
+  let p=0;if(j.status==='enroute'){const ev=S.events.filter(e=>e.job_id===j.id&&e.kind==='enroute').pop(),eta=Math.max(8,km(HQ,s)*6);p=Math.min(1,(Date.now()-new Date(ev?ev.created_at:j.updated_at))/1000/eta)}
+  const x=x0+(x1-x0)*p,y=y0+(y1-y0)*p,t=S.techs.find(q=>q.id===j.tech_id),g=el('g',{transform:`translate(${x},${y})`},units);
+  el('circle',{r:13,fill:'#e2262d',stroke:'#fff','stroke-width':2},g);const tx=el('text',{'text-anchor':'middle',y:4,fill:'#fff','font-size':12,'font-weight':700},g);tx.textContent=t?t.name[0]:'?'});
+ requestAnimationFrame(frame)}
+// ---------- shift ----------
+function endShift(){if(S.ended)return;S.ended=true;const per={};S.jobs.forEach(j=>{const t=S.techs.find(x=>x.id===j.tech_id);const p=per[t.name]||(per[t.name]={n:0,s:0});p.n++;p.s+=j.rating});
+ $('modal').className='ov on';$('modal').innerHTML=`<div class="bx ctr" style="max-width:420px"><h3>Shift complete</h3><div class="big">${(S.sum/MAX).toFixed(1)} ★</div><div class="mu">average rating across ${MAX} jobs</div>
+ <div style="text-align:left;margin:12px 0">${Object.entries(per).map(([n,p])=>`<div>${n}: ${p.n} job${p.n>1?'s':''}, avg ${(p.s/p.n).toFixed(1)} ★</div>`).join('')}</div>
+ <button class="pr" onclick="location.reload()">Start a new shift</button></div>`}
+function banner(t){const b=$('banner');b.textContent=t;b.style.display='block';setTimeout(()=>b.style.display='none',5000)}
+function playClip(u){try{const a=new Audio(u);a.play().catch(()=>{})}catch(e){}}
+async function start(){playClip('audio/start.mp3');banner('Shift started · 5 calls');$('modal').className='ov';S.shift='s'+Date.now();S.started=true;api('dispatch',{action:'start'});await poll();setTimeout(spawn,3500);setTimeout(spawn,6000);setInterval(spawn,20000);setInterval(poll,2500)}
+function showLogin(){$('modal').className='ov on';$('modal').innerHTML=`<form class="bx ctr" id="lf" style="max-width:340px"><h3>Dispatcher login</h3><input id="pw" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password"><div class="mu" id="le" style="color:#e2262d"></div><button class="pr" type="submit">Log in</button></form>`;
+ $('lf').onsubmit=async e=>{e.preventDefault();const r=await api('login',{password:$('pw').value});if(r.token){localStorage.setItem('av_tok',r.token);showStart()}else $('le').textContent='Wrong password'};$('pw').focus()}
+function showStart(){api('state').then(d=>{if(d.techs){S.techs=d.techs;drawRoster()}});$('modal').className='ov on';$('modal').innerHTML=`<div class="bx ctr" style="max-width:340px"><h3>5 job shift</h3><button class="pr" id="go">Start shift</button></div>`;$('go').onclick=start}
+$('vt').onclick=e=>{S.voice=!S.voice;e.target.textContent='Voice: '+(S.voice?'on':'off');e.target.setAttribute('aria-pressed',S.voice);if(!S.voice)stopVoice()};
+document.addEventListener('keydown',e=>{if(e.key=='Escape'&&S.started&&!S.ended)closeModal()});
+localStorage.getItem('av_tok')?showStart():showLogin();
+frame();
+</script></body></html>
